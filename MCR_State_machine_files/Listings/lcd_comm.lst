@@ -1,0 +1,87 @@
+C51 COMPILER V9.60.7.0   LCD_COMM                                                          05/15/2023 01:00:07 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LCD_COMM
+OBJECT MODULE PLACED IN .\Objects\lcd_comm.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE lcd_comm.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -lcd_comm.lst) TABS(2) OBJECT(.\Objects\lcd_comm.obj)
+
+line level    source
+
+   1          #include <aduc834.h>
+   2          #include <lab2_board.h>
+   3          #include <lcd_comm.h>
+   4          
+   5          void LCD_Init (void)
+   6          {
+   7   1        LCD_DelayMs(50);
+   8   1        PORT_LCD_CTRL &= ~(1<<LCD_RS);
+   9   1        PORT_LCD_D &= 0x0F;
+  10   1        PORT_LCD_D |= 0x03 << 4;
+  11   1        _SET_E();
+  12   1        _CLR_E();
+  13   1        LCD_DelayMs(10);
+  14   1        _SET_E();
+  15   1        _CLR_E();
+  16   1        LCD_DelayMs(1);
+  17   1        _SET_E();
+  18   1        _CLR_E();
+  19   1        LCD_DelayMs(1);
+  20   1      
+  21   1        /* 4b interface */
+  22   1        PORT_LCD_D &= 0x0F;
+  23   1        PORT_LCD_D |= 0x02 << 4;  
+  24   1        _SET_E();
+  25   1        _CLR_E();
+  26   1        LCD_DelayMs(1);
+  27   1      
+  28   1        LCD_Byte (0,0x28);
+  29   1        LCD_Byte (0,0x08);
+  30   1        LCD_Byte (0,LCD_CLEAR);
+  31   1        LCD_Byte (0,0x06);
+  32   1        LCD_Byte (0,0x0C);
+  33   1      } 
+  34          
+  35          void LCD_Byte (uint8_t ch, uint8_t byte)
+  36          {
+  37   1        if (ch==1)
+  38   1          PORT_LCD_CTRL |= (1<<LCD_RS);
+  39   1        else
+  40   1          PORT_LCD_CTRL &= ~(1<<LCD_RS);
+  41   1        
+  42   1        _SET_E();
+  43   1        PORT_LCD_D &= 0x0F;
+  44   1        PORT_LCD_D |= byte & 0xF0;
+  45   1        _CLR_E();
+  46   1        
+  47   1        _SET_E();
+  48   1        PORT_LCD_D &= 0x0F;
+  49   1        PORT_LCD_D |= byte << 4;
+  50   1        _CLR_E();
+  51   1        LCD_DelayMs(2);
+  52   1      }
+  53          
+  54          void LCD_SendString (uint8_t *str)
+C51 COMPILER V9.60.7.0   LCD_COMM                                                          05/15/2023 01:00:07 PAGE 2   
+
+  55          {
+  56   1        while(*str != 0)
+  57   1        {
+  58   2          _LCD_CHAR(*str);
+  59   2          str++;
+  60   2        }
+  61   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    193    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
